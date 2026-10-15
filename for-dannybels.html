@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <title>For Dannybels</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --gold: #c9a64c;
+      --gold-light: #e9d99f;
+      --ink: #46433d;
+      --muted: #8a857b;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      background: #fff;
+    }
+
+    body {
+      min-width: 320px;
+      margin: 0;
+      background: #fff;
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    main {
+      width: min(100% - 40px, 680px);
+      margin-inline: auto;
+    }
+
+    .gate {
+      display: flex;
+      min-height: 100vh;
+      min-height: 100svh;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 0;
+      text-align: center;
+    }
+
+    .game-star {
+      display: grid;
+      width: 176px;
+      aspect-ratio: 1;
+      place-items: center;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--gold);
+      cursor: pointer;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 138px;
+      line-height: 1;
+      text-shadow: 0 2px 0 rgba(156, 121, 39, .12), 0 5px 18px rgba(201, 166, 76, .24);
+      transition: color .25s ease, filter .25s ease, transform .25s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .game-star:hover { color: #d7b653; filter: drop-shadow(0 0 9px rgba(201, 166, 76, .32)); }
+    .game-star:active { transform: scale(.92); }
+    .game-star:focus-visible { outline: 2px solid var(--gold); outline-offset: 8px; }
+    .game-star.tap { animation: tap .28s ease; }
+    .game-star.activated { animation: pass-star .9s ease-in forwards; }
+
+    .game-instructions {
+      margin: 14px 0 12px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .progress-stars {
+      display: flex;
+      min-height: 27px;
+      justify-content: center;
+      gap: 10px;
+      color: var(--gold-light);
+      font-family: Arial, sans-serif;
+      font-size: 20px;
+    }
+
+    .progress-stars .lit { color: var(--gold); }
+
+    .click-count {
+      min-width: 52px;
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .letter[hidden] { display: none; }
+
+    .letter {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 76px 0 88px;
+    }
+
+    .letter-star {
+      display: block;
+      margin: 0 0 14px;
+      color: var(--gold);
+      font-size: 27px;
+      text-align: center;
+      text-shadow: 0 2px 10px rgba(201, 166, 76, .28);
+    }
+
+    h1 {
+      margin: 0 0 50px;
+      color: var(--ink);
+      font-size: clamp(38px, 8vw, 54px);
+      font-weight: 400;
+      line-height: 1.15;
+      text-align: center;
+    }
+
+    .letter p {
+      margin: 0 0 25px;
+      font-size: clamp(16px, 2.4vw, 18px);
+      line-height: 1.85;
+      text-wrap: pretty;
+    }
+
+    .shout {
+      color: #987b37;
+      font-family: Arial, sans-serif;
+      font-size: 13px !important;
+      font-weight: 700;
+      letter-spacing: .12em;
+    }
+
+    .same-stars { color: #83734b; }
+    .kaya { color: #83734b; font-size: 22px !important; }
+
+    .wish-scene {
+      position: relative;
+      display: grid;
+      min-height: 210px;
+      place-items: center;
+      margin: 38px 0;
+      padding: 42px 10px;
+      overflow: hidden;
+      border-block: 1px solid var(--gold-light);
+    }
+
+    .wish-line {
+      position: relative;
+      z-index: 1;
+      margin: 0 !important;
+      color: #6a5b39;
+      font-size: clamp(25px, 5vw, 34px) !important;
+      line-height: 1.3 !important;
+      text-align: center;
+    }
+
+    .shooting-star {
+      position: absolute;
+      top: 28%;
+      left: -190px;
+      display: flex;
+      width: 190px;
+      height: 28px;
+      align-items: center;
+      opacity: 0;
+      transform: rotate(-16deg);
+      pointer-events: none;
+    }
+
+    .shooting-star::before {
+      width: 160px;
+      height: 1px;
+      content: "";
+      background: linear-gradient(90deg, transparent, var(--gold));
+    }
+
+    .shooting-star::after {
+      color: var(--gold);
+      content: "★";
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 22px;
+      text-shadow: 0 1px 9px rgba(201, 166, 76, .45);
+    }
+
+    .wish-scene.is-visible .shooting-star { animation: shoot 1.65s ease-out both; }
+
+    .signoff {
+      margin-top: 34px !important;
+      color: #987b37;
+      font-size: 23px !important;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(13px);
+      transition: opacity .65s ease, transform .65s ease;
+    }
+
+    .reveal.is-visible { opacity: 1; transform: none; }
+
+    @keyframes tap {
+      50% { transform: scale(1.12) rotate(5deg); }
+    }
+
+    @keyframes pass-star {
+      to { opacity: 0; transform: translate(36vw, -43vh) scale(.24) rotate(48deg); }
+    }
+
+    @keyframes shoot {
+      0% { left: -190px; opacity: 0; }
+      14% { opacity: 1; }
+      78% { opacity: 1; }
+      100% { left: calc(100% + 190px); opacity: 0; }
+    }
+
+    @media (max-width: 520px) {
+      main { width: min(100% - 36px, 680px); }
+      .letter { padding-top: 54px; }
+      .game-star { width: 150px; font-size: 118px; }
+      .wish-scene { min-height: 180px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .game-star, .reveal { transition: none; }
+      .game-star.tap { animation: none; }
+      .game-star.activated { animation: none; }
+      .reveal { opacity: 1; transform: none; }
+      .shooting-star { left: calc(50% - 95px); opacity: 1; }
+      .wish-scene.is-visible .shooting-star { animation: none; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="gate" id="gate" aria-labelledby="game-instructions">
+      <button class="game-star" id="game-star" type="button" aria-label="Click the star five times to open the letter" aria-describedby="game-instructions">★</button>
+      <p class="game-instructions" id="game-instructions">Click me 5x</p>
+      <div class="progress-stars" id="progress-stars" role="progressbar" aria-label="Star progress" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0">
+        <span aria-hidden="true">☆</span><span aria-hidden="true">☆</span><span aria-hidden="true">☆</span><span aria-hidden="true">☆</span><span aria-hidden="true">☆</span>
+      </div>
+      <p class="click-count" id="click-count" aria-live="polite">0 / 5</p>
+    </section>
+
+    <article class="letter" id="letter" aria-label="A letter for Dannybels" hidden>
+      <span class="letter-star reveal" aria-hidden="true">★</span>
+      <h1 class="reveal">For Dannybels</h1>
+      <p class="reveal">Hi Dannybels feel ko nagstart yung true friendship natin nung nalaman mo na may isinulat ako kay Veyda tapos parang ikaw na naging bridge ko para lang maka express ng random thoughts ko sa kanya hahaha.</p>
+
+      <p class="reveal">Ikaw lang yung girlypop na napagsabihan ko lahat tungkol sa mga ginagatekeep ko like yung mga ginagawa ko kay Veyda but you know lahat na sinasabi ko sayo, as in from the heart yon kasi kapag from the mind ko may corrections pa yon kaya super lutang ako minsan kapag nagchachat tayo. Pero atleast you know na it is straight na sinabi ko without overthinking na ieexpose mo lahat na galit ko sa mga tao especially yung bwisit na papansin tsaka yung mga sinasabe ko na “I miss Veyda” tska mga sinasabi kong sayang sayang things. Kahit ineexpose mo ako minsan KAY Veyda it’s O Kay kasi its not that much of a big of a thing when it comes to that kasi ‘di naman kami nabobother. Or maybe nabobother siya wala ako pake kasi ikaw naman may kasalanan pag ganon kasi ikaw yung nang eexpose sakin. Just like now baka ineexpose mo na naman ako sa kanya.</p>
+
+      <p class="reveal">Pero somehow everytime na nagchachat ako sa’yo parang ano lang parang nabigyan ako ng freedom of speech na may naririnig sakin HAHAHAH. Kasi kahit ano nalang sinasabi ko kasi straight-forward nga ako pag chinachat kayo ni cresen tapos yung cinnamon roll feel ko yun yung favorite pastry ko na ang delicious yung gawa ni kuya mo tapos nagcracrave na naman ako.</p>
+
+      <p class="reveal">Tapos alam mo ang cute kaya ng mga daschhunds like mgahotdog na gumagalaw HAHAHAHAH. OK.</p>
+
+      <p class="reveal">As I was saying pag man may sinesend akong reels dapat watch mo lahat yon kasi important yon.</p>
+
+      <p class="shout reveal">AS IN SUPER IMPORTANT</p>
+
+      <p class="same-stars reveal">Tapos since star naman yung gusto mo edi same tayo breh.</p>
+
+      <p class="kaya reveal">Kaya</p>
+
+      <section class="wish-scene reveal" aria-label="Look may wishing star oh">
+        <span class="shooting-star" aria-hidden="true"></span>
+        <p class="wish-line">Look may wishing star oh…</p>
+      </section>
+
+      <p class="reveal">Yung wish ko is sana may maraming daschhunds ako sa future tapos nagflyfly kaming lahat sa plane ko tapos rinoroam namin tapos yung bahay ko may cinnamon roll na factory tapos yung isa ko pang wish is sana hinde tayo magkalimutan na friends kahit alam kong hinde naman pero pag mabangga ako ng truck sana magically maretrieve yung memory ko.</p>
+
+      <p class="reveal">Tapos yon lang ito na yung bracelet alam mo pinaghirapan ko tong cinocommunicate yung delivery rider kasi pagkaopenplang ng JNT cinall ko na agad yung driver para lang madeliver yung item sa umaga.</p>
+
+      <p class="signoff reveal">Bye.</p>
+    </article>
+  </main>
+
+  <script>
+    const gate = document.querySelector("#gate");
+    const starButton = document.querySelector("#game-star");
+    const progress = document.querySelector("#progress-stars");
+    const progressStars = [...progress.children];
+    const countLabel = document.querySelector("#click-count");
+    const letter = document.querySelector("#letter");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let clicks = 0;
+
+    function unlockLetter() {
+      gate.hidden = true;
+      letter.hidden = false;
+      letter.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
+
+      const revealItems = letter.querySelectorAll(".reveal");
+      if (reducedMotion || !("IntersectionObserver" in window)) {
+        revealItems.forEach((item) => item.classList.add("is-visible"));
+        return;
+      }
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.14 });
+
+      revealItems.forEach((item) => observer.observe(item));
+    }
+
+    starButton.addEventListener("click", () => {
+      if (clicks >= 5) return;
+
+      clicks += 1;
+      countLabel.textContent = `${clicks} / 5`;
+      progress.setAttribute("aria-valuenow", String(clicks));
+      progressStars.forEach((star, index) => {
+        if (index < clicks) {
+          star.textContent = "★";
+          star.classList.add("lit");
+        }
+      });
+
+      starButton.classList.remove("tap");
+      void starButton.offsetWidth;
+      starButton.classList.add("tap");
+
+      if (clicks === 5) {
+        starButton.disabled = true;
+        starButton.classList.remove("tap");
+        starButton.classList.add("activated");
+        window.setTimeout(unlockLetter, reducedMotion ? 0 : 900);
+      }
+    });
+  </script>
+</body>
+</html>
